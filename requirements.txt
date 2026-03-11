@@ -1,9 +1,9 @@
-streamlit
+streamlit==1.32.2
 firebase-admin
 google-auth-oauthlib
 requests
-python-dotenv
 numpy
-tensorflow
+python-dotenv
+tensorflow==2.13.0
 streamlit-drawable-canvas
 pillow
