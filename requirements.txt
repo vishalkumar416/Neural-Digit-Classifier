@@ -5,5 +5,7 @@ requests
 numpy==1.24.3
 python-dotenv
 tensorflow==2.13.0
+keras==2.13.1
 streamlit-drawable-canvas
 pillow
+setuptools
