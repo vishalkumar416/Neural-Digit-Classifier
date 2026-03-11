@@ -1,0 +1,9 @@
+streamlit
+firebase-admin
+google-auth-oauthlib
+requests
+python-dotenv
+numpy
+tensorflow
+streamlit-drawable-canvas
+pillow

@@ -1,0 +1,10 @@
+.env
+firebase/*.json
+__pycache__/
+*.pyc
+venv/
+lib/
+include/
+scripts/
+share/
+pyvenv.cfg
