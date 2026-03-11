@@ -105,7 +105,7 @@ if not firebase_admin._apps:
 db = firestore.client()
 
 # load model
-model = load_model("model/mnist_model.keras", compile=False)
+model = load_model("model/mnist_model.keras")
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
