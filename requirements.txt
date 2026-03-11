@@ -2,7 +2,7 @@ streamlit==1.32.2
 firebase-admin
 google-auth-oauthlib
 requests
-numpy==1.24.4
+numpy==1.24.3
 python-dotenv
 tensorflow==2.13.0
 streamlit-drawable-canvas
