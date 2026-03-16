@@ -87,16 +87,16 @@ height:20px;
 
 # firebase setup
 firebase_config = {
-    "type": st.secrets["FIREBASE_TYPE"],
-    "project_id": st.secrets["FIREBASE_PROJECT_ID"],
-    "private_key_id": st.secrets["FIREBASE_PRIVATE_KEY_ID"],
-    "private_key": st.secrets["FIREBASE_PRIVATE_KEY"].replace("\\n","\n"),
-    "client_email": st.secrets["FIREBASE_CLIENT_EMAIL"],
-    "client_id": st.secrets["FIREBASE_CLIENT_ID"],
-    "auth_uri": st.secrets["FIREBASE_AUTH_URI"],
-    "token_uri": st.secrets["FIREBASE_TOKEN_URI"],
-    "auth_provider_x509_cert_url": st.secrets["FIREBASE_AUTH_PROVIDER_X509_CERT_URL"],
-    "client_x509_cert_url": st.secrets["FIREBASE_CLIENT_X509_CERT_URL"]
+    "type": os.getenv("FIREBASE_TYPE"),
+    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace("\\n","\n"),
+    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+    "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+    "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
+    "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_X509_CERT_URL"),
+    "client_x509_cert_url": os.getenv("FIREBASE_CLIENT_X509_CERT_URL")
 }
 
 if not firebase_admin._apps:
@@ -105,7 +105,11 @@ if not firebase_admin._apps:
 db = firestore.client()
 
 # load model
-model = load_model("model/mnist_model.keras", compile=False)
+@st.cache_resource
+def get_model():
+    return load_model("model/mnist_model.keras")
+
+model = get_model()
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -117,10 +121,11 @@ def get_next_user_id():
 # google login
 def google_login_flow():
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+    redirect_uri = os.getenv("REDIRECT_URI", "http://localhost:8501/")
     flow = Flow.from_client_secrets_file(
         "firebase/digit-classifier-client_secret.json",
         scopes=["https://www.googleapis.com/auth/userinfo.email","openid"],
-        redirect_uri="http://localhost:8501/"
+        redirect_uri=redirect_uri
     )
     if "code" in st.query_params:
         flow.fetch_token(code=st.query_params["code"])
@@ -251,7 +256,7 @@ def dashboard():
             img = background.convert("L").resize((28,28))
             img_np = np.array(img)/255.0
             img_np = img_np.reshape(1,28,28,1)
-            prediction = model.predict(img_np,verbose=0)
+            prediction = model(img_np, training=False).numpy()
             digit = int(np.argmax(prediction))
             confidence = float(np.max(prediction)*100)
             db.collection("digit_predictions").add({
