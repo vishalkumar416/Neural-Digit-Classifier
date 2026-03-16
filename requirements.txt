@@ -4,8 +4,8 @@ google-auth-oauthlib
 requests
 numpy==1.24.3
 python-dotenv
-tensorflow-cpu==2.15.0
-keras==2.15.0
+tensorflow-cpu>=2.16.1
+keras>=3.0.0
 streamlit-drawable-canvas
 pillow
 setuptools
