@@ -122,8 +122,14 @@ def get_next_user_id():
 def google_login_flow():
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
     redirect_uri = os.getenv("REDIRECT_URI", "http://localhost:8501/")
+    
+    # Render mounts secret files at /etc/secrets/ OR at the root. We check both.
+    secret_file = "firebase/digit-classifier-client_secret.json"
+    if not os.path.exists(secret_file):
+        secret_file = "/etc/secrets/firebase/digit-classifier-client_secret.json"
+        
     flow = Flow.from_client_secrets_file(
-        "firebase/digit-classifier-client_secret.json",
+        secret_file,
         scopes=["https://www.googleapis.com/auth/userinfo.email","openid"],
         redirect_uri=redirect_uri
     )
